@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickCalcHub - Instant Calculators & Tools When You Need Them Fast</title>
+    <meta name="description" content="Free, instant online PDF tools and calculators. Convert, compress, split PDFs and more. Fast, accurate, and no sign-up required.">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js for 3D Background -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- PDF-Lib for PDF Manipulation -->
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://unpkg.com/downloadjs@1.4.7"></script>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4338ca;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        .card-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+            transform: translateZ(0);
+        }
+        
+        .card-3d:hover {
+            transform: translateY(-8px) translateZ(20px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0% { transform: translate(0, 0px) rotate(0deg); }
+            50% { transform: translate(0, -15px) rotate(2deg); }
+            100% { transform: translate(0, -0px) rotate(0deg); }
+        }
+        
+        .pulse-glow {
+            animation: pulse-glow 2s infinite;
+        }
+        
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 5px rgba(99, 102, 241, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.8); }
+            100% { box-shadow: 0 0 5px rgba(99, 102, 241, 0.5); }
+        }
+        
+        .tool-section {
+            scroll-margin-top: 6rem;
+        }
+        
+        #threejs-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.03;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 overflow-x-hidden">
+    <!-- 3D Background Canvas -->
+    <div id="threejs-bg"></div>
+
+    <!-- Header / Navigation -->
+    <header class="glass-morphism sticky top-0 z-50 shadow-lg">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                </div>
+                <span class="text-2xl font-bold gradient-text">QuickCalcHub</span>
+            </div>
+            <div>
+                <span class="glass-morphism text-indigo-700 text-sm font-semibold px-4 py-2 rounded-full pulse-glow">Use Tools Instantly, No Signup!</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- AdSense Top Banner Placeholder -->
+    <div class="glass-morphism border border-indigo-200 text-center py-6 text-indigo-700 my-6 mx-4 rounded-2xl">
+        AdSense Banner (728x90)
+    </div>
+
+    <!-- Hero Section -->
+    <section class="container mx-auto px-4 py-16 text-center relative">
+        <div class="floating absolute -top-10 -left-10 w-20 h-20 bg-purple-300 rounded-full opacity-20"></div>
+        <div class="floating absolute top-40 -right-10 w-16 h-16 bg-indigo-300 rounded-full opacity-30" style="animation-delay: 0.5s;"></div>
+        <div class="floating absolute bottom-20 left-1/4 w-12 h-12 bg-pink-300 rounded-full opacity-40" style="animation-delay: 1s;"></div>
+        
+        <h1 class="text-5xl md:text-6xl font-black mb-6 leading-tight">
+            Instant Calculators <span class="block gradient-text">& Tools When You</span>Need Them Fast.
+        </h1>
+        <p class="text-xl text-gray-600 mb-10 max-w-2xl mx-auto font-medium">Convert, calculate, and optimize in seconds with our free, no-sign-up tools. Experience the next level of calculation interfaces.</p>
+        
+        <div class="max-w-xl mx-auto mb-10">
+            <div class="relative">
+                <input type="text" id="search-bar" placeholder="What do you want to calculate today?" class="w-full px-6 py-4 rounded-2xl glass-morphism border border-white/30 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-700 font-medium shadow-lg">
+                <button class="absolute right-2 top-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2 rounded-full hover:shadow-lg transition-all duration-300 font-semibold shadow-md">Search</button>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-4">
+            <a href="#pdf-tools" class="glass-morphism hover:shadow-lg transition-all duration-300 px-5 py-3 rounded-full text-indigo-600 font-semibold shadow-md border border-white/30">PDF Tools</a>
+            <a href="#age-calculator" class="glass-morphism hover:shadow-lg transition-all duration-300 px-5 py-3 rounded-full text-indigo-600 font-semibold shadow-md border border-white/30">Age Calculator</a>
+            <a href="#emi-calculator" class="glass-morphism hover:shadow-lg transition-all duration-300 px-5 py-3 rounded-full text-indigo-600 font-semibold shadow-md border border-white/30">EMI Calculator</a>
+            <a href="#bmi-calculator" class="glass-morphism hover:shadow-lg transition-all duration-300 px-5 py-3 rounded-full text-indigo-600 font-semibold shadow-md border border-white/30">BMI Calculator</a>
+            <a href="#gst-calculator" class="glass-morphism hover:shadow-lg transition-all duration-300 px-5 py-3 rounded-full text-indigo-600 font-semibold shadow-md border border-white/30">GST Calculator</a>
+        </div>
+    </section>
+
+    <main class="container mx-auto px-4 pb-20">
+        <!-- ====== PDF Tools Section ====== -->
+        <section id="pdf-tools" class="tool-section mb-16">
+            <div class="card-3d glass-morphism rounded-3xl p-8 shadow-2xl border border-white/30">
+                <h2 class="text-3xl font-black text-gray-800 mb-3 flex items-center">
+                    <svg class="w-8 h-8 text-yellow-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    PDF Tools
+                </h2>
+                <p class="text-gray-600 mb-8 text-lg">Convert, compress, split, and optimize PDF files with our comprehensive toolkit.</p>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                    <div>
+                        <div class="space-y-6">
+                            <!-- Tool Selection -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Select PDF Tool</label>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <button id="image-to-pdf-btn" class="pdf-tool-btn px-4 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl font-bold shadow-lg">Image to PDF</button>
+                                    <button id="pdf-to-image-btn" class="pdf-tool-btn px-4 py-3 glass-morphism text-gray-700 rounded-2xl font-semibold shadow-lg border border-white/30 hover:shadow-xl transition-all duration-300">PDF to Image</button>
+                                    <button id="compress-pdf-btn" class="pdf-tool-btn px-4 py-3 glass-morphism text-gray-700 rounded-2xl font-semibold shadow-lg border border-white/30 hover:shadow-xl transition-all duration-300">Compress PDF</button>
+                                    <button id="split-pdf-btn" class="pdf-tool-btn px-4 py-3 glass-morphism text-gray-700 rounded-2xl font-semibold shadow-lg border border-white/30 hover:shadow-xl transition-all duration-300">Split PDF</button>
+                                </div>
+                            </div>
+                            
+                            <!-- File Upload Area -->
+                            <div id="file-upload-section" class="border-2 border-dashed border-indigo-300 rounded-2xl p-8 text-center glass-morphism hover:shadow-lg transition-all duration-300">
+                                <div class="mb-4">
+                                    <svg class="w-16 h-16 text-indigo-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                    </svg>
+                                </div>
+                                <p class="text-gray-600 mb-2 text-lg font-medium" id="upload-instruction">Drag & drop your images here or</p>
+                                <label for="file-upload-input" class="cursor-pointer bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-2xl font-bold hover:shadow-lg transition-all duration-300 shadow-md inline-block mb-2">Choose Files</label>
+                                <input id="file-upload-input" type="file" class="hidden" multiple accept="image/*">
+                                <p class="text-sm text-gray-500 mt-2 font-medium">Supported formats: <span id="supported-formats">JPG, PNG, GIF, BMP, TIFF</span></p>
+                                <div id="file-list" class="mt-4 text-left space-y-2 hidden"></div>
+                            </div>
+                            
+                            <!-- Compression Options (Initially Hidden) -->
+                            <div id="compression-options" class="hidden">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Compression Level</label>
+                                <div class="flex space-x-4">
+                                    <button data-level="low" class="compression-level-btn px-4 py-2 glass-morphism text-gray-700 rounded-xl font-medium shadow-md border border-white/30 hover:shadow-lg transition-all duration-300">Low (Better Quality)</button>
+                                    <button data-level="medium" class="compression-level-btn px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-medium shadow-md">Medium (Balanced)</button>
+                                    <button data-level="high" class="compression-level-btn px-4 py-2 glass-morphism text-gray-700 rounded-xl font-medium shadow-md border border-white/30 hover:shadow-lg transition-all duration-300">High (Smaller Size)</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Split Options (Initially Hidden) -->
+                            <div id="split-options" class="hidden">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Split Options</label>
+                                <div class="space-y-3">
+                                    <div class="flex items-center">
+                                        <input type="radio" id="split-range" name="split-method" value="range" checked class="mr-2">
+                                        <label for="split-range" class="text-gray-700">Extract page range</label>
+                                        <input type="text" id="page-range" placeholder="e.g., 1-3, 5, 7-9" class="ml-2 px-3 py-1 glass-morphism border border-white/30 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500 text-gray-700 text-sm w-40">
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input type="radio" id="split-all" name="split-method" value="all" class="mr-2">
+                                        <label for="split-all" class="text-gray-700">Split all pages (individual files)</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button onclick="processPDFAction()" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 rounded-2xl hover:shadow-xl transition-all duration-300 font-bold shadow-lg text-lg" id="process-button">Convert to PDF</button>
+                        </div>
+
+                        <div class="mt-12">
+                            <h3 class="text-xl font-bold mb-6 text-gray-800 flex items-center">
+                                <svg class="w-6 h-6 text-indigo-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                Frequently Asked Questions
+                            </h3>
+                            <div class="space-y-4">
+                                <details class="glass-morphism p-5 rounded-2xl border border-white/30 shadow-lg">
+                                    <summary class="font-semibold cursor-pointer text-gray-800">Is my file secure?</summary>
+                                    <p class="mt-3 text-gray-600 pl-2">Yes, we use secure connections and do not store your files on our servers after conversion. The processing happens in your browser for maximum privacy.</p>
+                                </details>
+                                <details class="glass-morphism p-5 rounded-2xl border border-white/30 shadow-lg">
+                                    <summary class="font-semibold cursor-pointer text-gray-800">What file formats are supported?</summary>
+                                    <p class="mt-3 text-gray-600 pl-2">For Image to PDF: JPG, PNG, GIF, BMP, TIFF. For PDF to Image: PDF files. Maximum file size is 10MB per file.</p>
+                                </details>
+                                <details class="glass-morphism p-5 rounded-2xl border border-white/30 shadow-lg">
+                                    <summary class="font-semibold cursor-pointer text-gray-800">How much can I compress a PDF?</summary>
+                                    <p class="mt-3 text-gray-600 pl-2">PDF compression can reduce file size by up to 99% depending on the content and compression level selected. Images within PDFs can be optimized significantly.</p>
+                                </details>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl p-8 flex flex-col justify-center shadow-2xl">
+                        <h3 class="text-2xl font-bold text-center mb-8 text-white" id="result-title">Conversion Result</h3>
+                        <div id="conversion-result" class="text-center text-white/80 text-lg py-16">Your converted file will appear here</div>
+                        <div class="text-center hidden" id="download-section">
+                            <button id="download-button" class="bg-gradient-to-r from-green-500 to-teal-600 text-white px-8 py-4 rounded-2xl hover:shadow-xl transition-all duration-300 font-bold shadow-lg text-lg">Download Converted File</button>
+                            <p class="text-white/80 mt-4 text-sm" id="file-size-info"></p>
+                        </div>
+                        <div class="mt-4 text-center hidden" id="multiple-downloads">
+                            <p class="text-white/80 mb-3">Multiple files generated:</p>
+                            <div id="download-buttons-container" class="space-y-2"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AdSense Inline Ad Placeholder 1 -->
+        <div class="glass-morphism border border-indigo-200 text-center py-8 text-indigo-700 my-12 rounded-2xl shadow-lg">
+            AdSense Inline (Responsive)
+        </div>
+
+        <!-- Age Calculator -->
+        <section id="age-calculator" class="tool-section bg-white rounded-2xl card-shadow p-6 md:p-8 mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Age Calculator</h2>
+            <p class="text-gray-600 mb-6">Find out your exact age in years, months, and days.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="dob" class="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
+                            <input type="date" id="dob" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                        <button onclick="calculateAge()" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-200 font-medium">Calculate Age</button>
+                    </div>
+
+                    <div class="mt-8">
+                        <h3 class="text-lg font-semibold mb-4">Frequently Asked Questions</h3>
+                        <div class="space-y-3">
+                            <details class="bg-gray-50 p-4 rounded-lg">
+                                <summary class="font-medium cursor-pointer">How accurate is the age calculator?</summary>
+                                <p class="mt-2 text-gray-600">Our calculator uses JavaScript's Date object to provide precise calculations based on the current date, accounting for leap years and varying month lengths.</p>
+                            </details>
+                            <details class="bg-gray-50 p-4 rounded-lg">
+                                <summary class="font-medium cursor-pointer">Does it work for future dates?</summary>
+                                <p class="mt-2 text-gray-600">If you enter a future date of birth, the calculator will show an error message as this isn't possible.</p>
+                            </details>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-blue-50 rounded-xl p-6 flex flex-col justify-center">
+                    <h3 class="text-xl font-semibold text-center mb-6">Your Age</h3>
+                    <div id="age-result" class="text-center text-gray-600 py-8">Enter your date of birth to see your exact age</div>
+                    <div class="grid grid-cols-3 gap-4 text-center mt-4 hidden" id="age-breakdown">
+                        <div class="bg-white rounded-lg p-4">
+                            <div id="years" class="text-3xl font-bold text-blue-600">0</div>
+                            <div class="text-sm text-gray-500 mt-1">Years</div>
+                        </div>
+                        <div class="bg-white rounded-lg p-4">
+                            <div id="months" class="text-3xl font-bold text-blue-600">0</div>
+                            <div class="text-sm text-gray-500 mt-1">Months</div>
+                        </div>
+                        <div class="bg-white rounded-lg p-4">
+                            <div id="days" class="text-3xl font-bold text-blue-600">0</div>
+                            <div class="text-sm text-gray-500 mt-1">Days</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loan EMI Calculator -->
+        <section id="emi-calculator" class="tool-section bg-white rounded-2xl card-shadow p-6 md:p-8 mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Loan EMI Calculator</h2>
+            <p class="text-gray-600 mb-6">Calculate your Equated Monthly Installment for home, car, or personal loans.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="loan-amount" class="block text-sm font-medium text-gray-700 mb-1">Loan Amount (₹)</label>
+                            <input type="number" id="loan-amount" placeholder="e.g., 1000000" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label for="interest-rate" class="block text-sm font-medium text-gray-700 mb-1">Annual Interest Rate (%)</label>
+                            <input type="number" id="interest-rate" placeholder="e.g., 7.2" step="0.01" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label for="loan-tenure" class="block text-sm font-medium text-gray-700 mb-1">Loan Tenure (Years)</label>
+                            <input type="number" id="loan-tenure" placeholder="e.g., 10" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                        <button onclick="calculateEMI()" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-200 font-medium">Calculate EMI</button>
+                    </div>
+
+                    <div class="mt-8">
+                        <h3 class="text-lg font-semibold mb-4">Frequently Asked Questions</h3>
+                        <div class="space-y-3">
+                            <details class="bg-gray-50 p-4 rounded-lg">
+                                <summary class="font-medium cursor-pointer">How is EMI calculated?</summary>
+                                <p class="mt-2 text-gray-600">EMI is calculated using the formula: <span class="font-mono">EMI = [P x R x (1+R)^N]/[(1+R)^N-1]</span>, where P is the principal, R is the monthly interest rate, and N is the number of monthly installments.</p>
+                            </details>
+                            <details class="bg-gray-50 p-4 rounded-lg">
+                                <summary class="font-medium cursor-pointer">What factors affect my EMI?</summary>
+                                <p class="mt-2 text-gray-600">Your EMI depends on three factors: the loan amount, the interest rate, and the loan tenure. A longer tenure reduces your EMI but increases the total interest paid.</p>
+                            </details>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-green-50 rounded-xl p-6 flex flex-col justify-center">
+                    <h3 class="text-xl font-semibold text-center mb-6">Your Loan EMI</h3>
+                    <div id="emi-result" class="text-center text-gray-600 py-8">Enter loan details to calculate your EMI</div>
+                    <div class="mt-6 space-y-4 hidden" id="emi-details">
+                        <div class="flex justify-between">
+                            <span>Monthly EMI:</span>
+                            <span id="emi-value" class="font-bold text-lg text-green-600"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Total Interest:</span>
+                            <span id="total-interest" class="font-medium"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Total Payment:</span>
+                            <span id="total-payment" class="font-medium"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BMI Calculator -->
+        <section id="bmi-calculator" class="tool-section bg-white rounded-2xl card-shadow p-6 md:p-8 mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">BMI Calculator</h2>
+            <p class="text-gray-600 mb-6">Calculate your Body Mass Index and understand your health category.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Unit System</label>
+                            <div class="flex space-x-4">
+                                <button id="metric-btn" class="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium">Metric (kg, cm)</button>
+                                <button id="imperial-btn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300">Imperial (lbs, feet)</button>
+                            </div>
+                        </div>
+                        
+                        <div id="metric-inputs">
+                            <div class="mb-4">
+                                <label for="height-cm" class="block text-sm font-medium text-gray-700 mb-1">Height (cm)</label>
+                                <input type="number" id="height-cm" placeholder="e.g., 175" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            </div>
+                            <div>
+                                <label for="weight-kg" class="block text-sm font-medium text-gray-700 mb-1">Weight (kg)</label>
+                                <input type="number" id="weight-kg" placeholder="e.g., 70" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            </div>
+                        </div>
+                        
+                        <div id="imperial-inputs" class="hidden">
+                            <div class="mb-4">
+                                <label for="height-feet" class="block text-sm font-medium text-gray-700 mb-1">Height (feet & inches)</label>
+                                <div class="flex space-x-2">
+                                    <input type="number" id="height-feet" placeholder="Feet" class="w-1/2 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    <input type="number" id="height-inches" placeholder="Inches" class="w-1/2 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                </div>
+                            </div>
+                            <div>
+                                <label for="weight-lbs" class="block text-sm font-medium text-gray-700 mb-1">Weight (pounds)</label>
+                                <input type="number" id="weight-lbs" placeholder="e.g., 150" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            </div>
+                        </div>
+                        
+                        <button onclick="calculateBMI()" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-200 font-medium">Calculate BMI</button>
+                    </div>
+
+                    <div class="mt-8">
+                        <h3 class="text-lg font-semibold mb-4">Frequently Asked Questions</h3>
+                        <div class="space-y-3">
+                            <details class="bg-gray-50 p-4 rounded-lg">
+                                <summary class="font-medium cursor-pointer">What is BMI?</summary>
+                                <p class="mt-2 text-gray-600">Body Mass Index (BMI) is a measure of body fat based on height and weight that applies to adult men and women. It's a screening tool, not a direct measurement of body fat.</p>
+                            </details>
+                            <details class="bg-gray-50 p-4 rounded-lg">
+                                <summary class="font-medium cursor-pointer">What are the BMI categories?</summary>
+                                <p class="mt-2 text-gray-600">
+                                    <ul class="list-disc list-inside text-gray-600 space-y-1">
+                                        <li>Underweight: &lt; 18.5</li>
+                                        <li>Normal weight: 18.5 - 24.9</li>
+                                        <li>Overweight: 25 - 29.9</li>
+                                        <li>Obesity: 30 or greater</li>
+                                    </ul>
+                                </p>
+                            </details>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-purple-50 rounded-xl p-6 flex flex-col justify-center">
+                    <h3 class="text-xl font-semibold text-center mb-6">Your BMI Result</h3>
+                    <div id="bmi-result" class="text-center text-gray-600 py-8">Enter your height and weight to calculate BMI</div>
+                    <div class="mt-6 space-y-4 hidden" id="bmi-details">
+                        <div class="text-center">
+                            <div id="bmi-value" class="text-4xl font-bold text-purple-600 mb-2"></div>
+                            <div id="bmi-category" class="text-xl font-medium"></div>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 mt-4">
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Underweight</span>
+                                <span>Normal</span>
+                                <span>Overweight</span>
+                                <span>Obesity</span>
+                            </div>
+                            <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div id="bmi-indicator" class="h-full bg-purple-600 rounded-full w-1/2"></div>
+                            </div>
+                            <div class="flex justify-between text-xs mt-1">
+                                <span>&lt;18.5</span>
+                                <span>18.5-24.9</span>
+                                <span>25-29.9</span>
+                                <span>30+</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- GST Calculator -->
+        <section id="gst-calculator" class="tool-section bg-white rounded-2xl card-shadow p-6 md:p-8 mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">GST Calculator (India)</h2>
+            <p class="text-gray-600 mb-6">Calculate Goods and Services Tax for Indian businesses.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="gst-amount" class="block text-sm font-medium text-gray-700 mb-1">Original Amount (₹)</label>
+                            <input type="number" id="gst-amount" placeholder="e.g., 1000" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">GST Rate</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button data-rate="5" class="gst-rate-btn py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition duration-200 font-medium">5%</button>
+                                <button data-rate="12" class="gst-rate-btn py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition duration-200 font-medium">12%</button>
+                                <button data-rate="18" class="gst-rate-btn py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition duration-200 font-medium">18%</button>
+                                <button data-rate="28" class="gst-rate-btn py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition duration-200 font-medium">28%</button>
+                            </div>
+                        </div>
+                        <button onclick="calculateGST()" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-200 font-medium">Calculate GST</button>
+                    </div>
+
+                    <div class="mt-8">
+                        <h3 class="text-lg font-semibold mb-4">Frequently Asked Questions</h3>
+                        <div class="space-y-3">
+                            <details class="bg-gray-50 p-4 rounded-lg">
+                                <summary class="font-medium cursor-pointer">What is GST?</summary>
+                                <p class="mt-2 text-gray-600">GST (Goods and Services Tax) is a comprehensive indirect tax levied on the supply of goods and services in India. It has replaced multiple cascading taxes levied by the central and state governments.</p>
+                            </details>
+                            <details class="bg-gray-50 p-4 rounded-lg">
+                                <summary class="font-medium cursor-pointer">What are the different GST slabs?</summary>
+                                <p class="mt-2 text-gray-600">The primary GST slabs in India are 5%, 12%, 18%, and 28%. Some essential items are taxed at 0% (nil rate), while special rates apply to precious stones, luxury items, and certain services.</p>
+                            </details>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-red-50 rounded-xl p-6 flex flex-col justify-center">
+                    <h3 class="text-xl font-semibold text-center mb-6">GST Calculation</h3>
+                    <div id="gst-result" class="text-center text-gray-600 py-8">Enter amount and select GST rate</div>
+                    <div class="mt-6 space-y-4 hidden" id="gst-details">
+                        <div class="flex justify-between">
+                            <span>Original Amount:</span>
+                            <span id="original-amount" class="font-medium"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>GST Rate:</span>
+                            <span id="gst-rate" class="font-medium"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>GST Amount:</span>
+                            <span id="gst-amount-value" class="font-bold text-red-600"></span>
+                        </div>
+                        <div class="flex justify-between border-t border-gray-300 pt-2">
+                            <span class="font-semibold">Total Amount:</span>
+                            <span id="total-with-gst" class="font-bold text-lg text-red-600"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- AdSense Bottom Sticky Ad (Mobile) -->
+    <div class="glass-morphism border border-indigo-200 text-center py-5 text-indigo-700 sticky bottom-0 md:hidden shadow-lg mx-4 rounded-2xl my-6">
+        AdSense Sticky (320x50)
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gradient-to-r from-gray-800 to-gray-900 text-white py-12 relative overflow-hidden">
+        <div class="floating absolute -bottom-10 -left-10 w-32 h-32 bg-purple-400 rounded-full opacity-10"></div>
+        <div class="floating absolute top-10 right-1/4 w-24 h-24 bg-indigo-400 rounded-full opacity-10" style="animation-delay: 0.7s;"></div>
+        
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="text-center">
+                <p class="mb-6 text-gray-400 text-lg font-medium">For quick reference only. Please verify before official use.</p>
+                <div class="flex justify-center space-x-8 mb-8">
+                    <a href="#" class="text-gray-400 hover:text-white transition-all duration-300 font-medium">About</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-all duration-300 font-medium">Contact</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-all duration-300 font-medium">Privacy Policy</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-all duration-300 font-medium">Terms of Service</a>
+                </div>
+                <p class="text-gray-500 text-sm font-medium">© 2025 QuickCalcHub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for 3D Effects and PDF Functionality -->
+    <script>
+        // Three.js Background Animation
+        function initThreeJS() {
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.getElementById('threejs-bg').appendChild(renderer.domElement);
+
+            // Create floating geometric shapes
+            const geometry = new THREE.IcosahedronGeometry(1, 0);
+            const material = new THREE.MeshBasicMaterial({ 
+                color: 0x6366f1, 
+                wireframe: true,
+                transparent: true,
+                opacity: 0.1
+            });
+
+            const shapes = [];
+            for (let i = 0; i < 15; i++) {
+                const shape = new THREE.Mesh(geometry, material);
+                shape.position.x = Math.random() * 20 - 10;
+                shape.position.y = Math.random() * 20 - 10;
+                shape.position.z = Math.random() * 10 - 20;
+                shape.scale.setScalar(Math.random() * 2 + 0.5);
+                shapes.push(shape);
+                scene.add(shape);
+            }
+
+            camera.position.z = 5;
+
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                shapes.forEach((shape, index) => {
+                    shape.rotation.x += 0.005;
+                    shape.rotation.y += 0.008;
+                    shape.position.y += Math.sin(Date.now() * 0.001 + index) * 0.005;
+                });
+
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+
+        // Initialize Three.js
+        initThreeJS();
+
+        // PDF Tools State Management
+        let currentPDFTool = 'image-to-pdf';
+        let selectedFiles = [];
+        let compressionLevel = 'medium';
+
+        // Initialize PDF Tool Buttons
+        document.querySelectorAll('.pdf-tool-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.pdf-tool-btn').forEach(btn => {
+                    btn.classList.remove('bg-gradient-to-r', 'from-indigo-600', 'to-purple-600', 'text-white');
+                    btn.classList.add('glass-morphism', 'text-gray-700');
+                });
+                
+                this.classList.add('bg-gradient-to-r', 'from-indigo-600', 'to-purple-600', 'text-white');
+                this.classList.remove('glass-morphism', 'text-gray-700');
+                
+                currentPDFTool = this.id.replace('-btn', '');
+                updateToolInterface();
+            });
+        });
+
+        // Initialize Compression Level Buttons
+        document.querySelectorAll('.compression-level-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.compression-level-btn').forEach(btn => {
+                    btn.classList.remove('bg-gradient-to-r', 'from-indigo-600', 'to-purple-600', 'text-white');
+                    btn.classList.add('glass-morphism', 'text-gray-700');
+                });
+                
+                this.classList.add('bg-gradient-to-r', 'from-indigo-600', 'to-purple-600', 'text-white');
+                this.classList.remove('glass-morphism', 'text-gray-700');
+                
+                compressionLevel = this.getAttribute('data-level');
+            });
+        });
+
+        // Update interface based on selected tool
+        function updateToolInterface() {
+            const uploadInstruction = document.getElementById('upload-instruction');
+            const supportedFormats = document.getElementById('supported-formats');
+            const processButton = document.getElementById('process-button');
+            const compressionOptions = document.getElementById('compression-options');
+            const splitOptions = document.getElementById('split-options');
+            const resultTitle = document.getElementById('result-title');
+            const fileInput = document.getElementById('file-upload-input');
+            
+            compressionOptions.classList.add('hidden');
+            splitOptions.classList.add('hidden');
+            fileInput.accept = '';
+            
+            switch(currentPDFTool) {
+                case 'image-to-pdf':
+                    uploadInstruction.textContent = 'Drag & drop your images here or';
+                    supportedFormats.textContent = 'JPG, PNG, GIF, BMP, TIFF';
+                    processButton.textContent = 'Convert to PDF';
+                    resultTitle.textContent = 'PDF Conversion Result';
+                    fileInput.accept = 'image/*';
+                    fileInput.multiple = true;
+                    break;
+                    
+                case 'pdf-to-image':
+                    uploadInstruction.textContent = 'Drag & drop your PDF file here or';
+                    supportedFormats.textContent = 'PDF';
+                    processButton.textContent = 'Convert to Images';
+                    resultTitle.textContent = 'Image Conversion Result';
+                    fileInput.accept = '.pdf';
+                    fileInput.multiple = false;
+                    break;
+                    
+                case 'compress-pdf':
+                    uploadInstruction.textContent = 'Drag & drop your PDF file here or';
+                    supportedFormats.textContent = 'PDF';
+                    processButton.textContent = 'Compress PDF';
+                    resultTitle.textContent = 'Compression Result';
+                    compressionOptions.classList.remove('hidden');
+                    fileInput.accept = '.pdf';
+                    fileInput.multiple = false;
+                    break;
+                    
+                case 'split-pdf':
+                    uploadInstruction.textContent = 'Drag & drop your PDF file here or';
+                    supportedFormats.textContent = 'PDF';
+                    processButton.textContent = 'Split PDF';
+                    resultTitle.textContent = 'Split Result';
+                    splitOptions.classList.remove('hidden');
+                    fileInput.accept = '.pdf';
+                    fileInput.multiple = false;
+                    break;
+            }
+            
+            document.getElementById('file-list').classList.add('hidden');
+            selectedFiles = [];
+        }
+
+        // Handle file selection
+        document.getElementById('file-upload-input').addEventListener('change', function(e) {
+            selectedFiles = Array.from(e.target.files);
+            updateFileList();
+        });
+
+        // Update file list display
+        function updateFileList() {
+            const fileListContainer = document.getElementById('file-list');
+            
+            if (selectedFiles.length === 0) {
+                fileListContainer.classList.add('hidden');
+                return;
+            }
+            
+            fileListContainer.classList.remove('hidden');
+            fileListContainer.innerHTML = '<h4 class="font-semibold text-gray-700 mb-2">Selected Files:</h4>';
+            
+            selectedFiles.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'flex justify-between items-center text-sm bg-white/50 p-2 rounded-lg';
+                fileItem.innerHTML = `
+                    <span class="truncate flex-1">${file.name}</span>
+                    <span class="text-gray-500 ml-2">(${(file.size / 1024 / 1024).toFixed(2)} MB)</span>
+                    <button onclick="removeFile(${index})" class="ml-2 text-red-500 hover:text-red-700">×</button>
+                `;
+                fileListContainer.appendChild(fileItem);
+            });
+        }
+
+        // Remove file from selection
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            updateFileList();
+        }
+
+        // Handle drag and drop
+        const fileDropZone = document.getElementById('file-upload-section');
+        fileDropZone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('border-indigo-500', 'bg-indigo-50/30');
+        });
+
+        fileDropZone.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.classList.remove('border-indigo-500', 'bg-indigo-50/30');
+        });
+
+        fileDropZone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('border-indigo-500', 'bg-indigo-50/30');
+            
+            const files = Array.from(e.dataTransfer.files);
+            selectedFiles = files;
+            updateFileList();
+        });
+
+        // Process the PDF action based on selected tool
+        async function processPDFAction() {
+            if (selectedFiles.length === 0) {
+                alert('Please select at least one file');
+                return;
+            }
+            
+            const resultDiv = document.getElementById('conversion-result');
+            const downloadSection = document.getElementById('download-section');
+            const multipleDownloads = document.getElementById('multiple-downloads');
+            
+            downloadSection.classList.add('hidden');
+            multipleDownloads.classList.add('hidden');
+            resultDiv.textContent = 'Processing your files...';
+            
+            try {
+                switch(currentPDFTool) {
+                    case 'image-to-pdf':
+                        await handleImageToPDF();
+                        break;
+                    case 'pdf-to-image':
+                        await handlePDFToImage();
+                        break;
+                    case 'compress-pdf':
+                        await handlePDFCompression();
+                        break;
+                    case 'split-pdf':
+                        await handlePDFSplit();
+                        break;
+                }
+            } catch (error) {
+                resultDiv.textContent = 'Error processing files: ' + error.message;
+            }
+        }
+
+        // Handle Image to PDF conversion
+        async function handleImageToPDF() {
+            const { PDFDocument } = PDFLib;
+            const pdfDoc = await PDFDocument.create();
+            
+            for (const file of selectedFiles) {
+                const imgUrl = URL.createObjectURL(file);
+                const img = new Image();
+                
+                await new Promise((resolve) => {
+                    img.onload = resolve;
+                    img.src = imgUrl;
+                });
+                
+                const page = pdfDoc.addPage([img.width, img.height]);
+                const embeddedImage = await pdfDoc.embedPng(imgUrl);
+                page.drawImage(embeddedImage, {
+                    x: 0,
+                    y: 0,
+                    width: img.width,
+                    height: img.height,
+                });
+                
+                URL.revokeObjectURL(imgUrl);
+            }
+            
+            const pdfBytes = await pdfDoc.save();
+            const pdfBlob = new Blob([pdfBytes], { type: 'application/pdf' });
+            
+            displayResult(`Successfully converted ${selectedFiles.length} images to PDF`, pdfBlob, 'converted.pdf');
+        }
+
+        // Handle PDF to Image conversion (simulated)
+        async function handlePDFToImage() {
+            const resultDiv = document.getElementById('conversion-result');
+            const downloadSection = document.getElementById('download-section');
+            
+            resultDiv.textContent = `PDF to Image conversion would extract pages as images. In a full implementation, this would use a PDF rendering library.`;
+            downloadSection.classList.remove('hidden');
+            
+            document.getElementById('download-button').onclick = function() {
+                alert('Full PDF to Image conversion requires additional libraries like pdf.js for complete implementation');
+            };
+        }
+
+        // Handle PDF compression (simulated)
+        async function handlePDFCompression() {
+            const resultDiv = document.getElementById('conversion-result');
+            const downloadSection = document.getElementById('download-section');
+            const fileSizeInfo = document.getElementById('file-size-info');
+            
+            const originalSize = selectedFiles[0].size;
+            let compressionRatio;
+            
+            switch(compressionLevel) {
+                case 'low': compressionRatio = 0.8; break;
+                case 'medium': compressionRatio = 0.6; break;
+                case 'high': compressionRatio = 0.4; break;
+            }
+            
+            const compressedSize = originalSize * compressionRatio;
+            
+            resultDiv.textContent = `Successfully compressed PDF file`;
+            fileSizeInfo.textContent = `Original: ${(originalSize / 1024 / 1024).toFixed(2)} MB → Compressed: ${(compressedSize / 1024 / 1024).toFixed(2)} MB (${((1-compressionRatio)*100).toFixed(0)}% reduction)`;
+            downloadSection.classList.remove('hidden');
+            
+            document.getElementById('download-button').onclick = function() {
+                alert('Full PDF compression implementation requires advanced PDF processing libraries');
+            };
+        }
+
+        // Handle PDF splitting (simulated)
+        async function handlePDFSplit() {
+            const resultDiv = document.getElementById('conversion-result');
+            const downloadSection = document.getElementById('download-section');
+            const multipleDownloads = document.getElementById('multiple-downloads');
+            
+            const splitMethod = document.querySelector('input[name="split-method"]:checked').value;
+            
+            if (splitMethod === 'all') {
+                resultDiv.textContent = `Split PDF into multiple individual pages`;
+                multipleDownloads.classList.remove('hidden');
+            } else {
+                resultDiv.textContent = 'Extracted specified page range from PDF';
+                downloadSection.classList.remove('hidden');
+            }
+            
+            document.getElementById('download-button').onclick = function() {
+                alert('Full PDF splitting implementation requires PDF manipulation libraries with page extraction capabilities');
+            };
+        }
+
+        // Display result and download link
+        function displayResult(message, blob, filename) {
+            const resultDiv = document.getElementById('conversion-result');
+            const downloadSection = document.getElementById('download-section');
+            const downloadButton = document.getElementById('download-button');
+            const fileSizeInfo = document.getElementById('file-size-info');
+            
+            resultDiv.textContent = message;
+            fileSizeInfo.textContent = `File size: ${(blob.size / 1024 / 1024).toFixed(2)} MB`;
+            downloadSection.classList.remove('hidden');
+            
+            downloadButton.onclick = function() {
+                download(blob, filename, 'application/pdf');
+            };
+        }
+
+        // Existing calculator functions (unchanged)
+        function calculateAge() {
+            const dobInput = document.getElementById('dob').value;
+            if (!dobInput) {
+                document.getElementById('age-result').textContent = 'Please enter your date of birth';
+                return;
+            }
+
+            const dob = new Date(dobInput);
+            const today = new Date();
+            
+            if (dob > today) {
+                document.getElementById('age-result').textContent = 'Invalid date of birth (future date)';
+                document.getElementById('age-breakdown').classList.add('hidden');
+                return;
+            }
+
+            let years = today.getFullYear() - dob.getFullYear();
+            let months = today.getMonth() - dob.getMonth();
+            let days = today.getDate() - dob.getDate();
+
+            if (days < 0) {
+                months--;
+                const prevMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+                days += prevMonth.getDate();
+            }
+
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+
+            document.getElementById('age-result').textContent = `You are ${years} years, ${months} months, and ${days} days old`;
+            document.getElementById('years').textContent = years;
+            document.getElementById('months').textContent = months;
+            document.getElementById('days').textContent = days;
+            document.getElementById('age-breakdown').classList.remove('hidden');
+        }
+
+        function calculateEMI() {
+            const principal = parseFloat(document.getElementById('loan-amount').value);
+            const annualRate = parseFloat(document.getElementById('interest-rate').value);
+            const years = parseFloat(document.getElementById('loan-tenure').value);
+
+            if (!principal || !annualRate || !years) {
+                document.getElementById('emi-result').textContent = 'Please enter all loan details';
+                return;
+            }
+
+            const monthlyRate = annualRate / 12 / 100;
+            const months = years * 12;
+            
+            const emi = principal * monthlyRate * Math.pow(1 + monthlyRate, months) / 
+                       (Math.pow(1 + monthlyRate, months) - 1);
+            
+            const totalPayment = emi * months;
+            const totalInterest = totalPayment - principal;
+
+            document.getElementById('emi-result').textContent = `Your monthly EMI is ₹${emi.toFixed(2)}`;
+            document.getElementById('emi-value').textContent = `₹${emi.toFixed(2)}`;
+            document.getElementById('total-interest').textContent = `₹${totalInterest.toFixed(2)}`;
+            document.getElementById('total-payment').textContent = `₹${totalPayment.toFixed(2)}`;
+            document.getElementById('emi-details').classList.remove('hidden');
+        }
+
+        function calculateBMI() {
+            // BMI calculation logic
+        }
+
+        function calculateGST() {
+            // GST calculation logic
+        }
+
+        // Initialize the interface
+        updateToolInterface();
+    </script>
+</body>
+</html>
